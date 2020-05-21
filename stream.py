@@ -1,7 +1,7 @@
 import sys
 from typing import List
 from datetime import datetime
-from .exceptions import MissingEntityException, InvalidEntityException
+from exceptions import MissingEntityException, InvalidEntityException
 
 
 class StreamModel(object):
