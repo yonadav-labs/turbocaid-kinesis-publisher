@@ -21,7 +21,7 @@ def get_modified_attrs(entity):
 
 
 def handler(event, context):
-    print(event)
+    # print(event)
     for record in event['Records']:
         if record['eventName'] == 'INSERT':
             pass
@@ -30,5 +30,4 @@ def handler(event, context):
             # put MedicaidDetail to Kinesis
             items = get_modified_attrs(record['dynamodb'])
 
-    return item
-
+    return items
