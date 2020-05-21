@@ -1,4 +1,4 @@
-def get_modified_attrs(entity):
+def get_modified_attrs(entity, is_insert=False):
     result = []
 
     for attr, val in entity['NewImage'].items():
@@ -6,7 +6,7 @@ def get_modified_attrs(entity):
             if 'value' not in val['M']:
                 continue
             value = val['M']['value']['S']
-            if value != entity['OldImage'][attr]['M']['value']['S']:
+            if is_insert or value != entity['OldImage'][attr]['M']['value']['S']:
                 item = {
                     'uuid': val['M']['uuid']['S'],
                     'attribute_name': attr,
@@ -24,10 +24,11 @@ def handler(event, context):
     # print(event)
     for record in event['Records']:
         if record['eventName'] == 'INSERT':
-            pass
+            items = get_modified_attrs(record['dynamodb'], True)
             # put TurbocaidApplication to Kinesis
         elif record['eventName'] == 'MODIFY':
             # put MedicaidDetail to Kinesis
             items = get_modified_attrs(record['dynamodb'])
 
+    print (items)
     return items

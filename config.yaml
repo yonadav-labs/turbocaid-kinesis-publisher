@@ -1,6 +1,6 @@
 region: us-east-1
 
-function_name: turbocaid--proxy
+function_name: turbocaid-dynamo-updates
 handler: handler.handler
-description: turbocaid-lambda-proxy
+description: An Amazon DynamoDB trigger that publishes the updates made to a table to the kinesis.
 runtime: python3.7
