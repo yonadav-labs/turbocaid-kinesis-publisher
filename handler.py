@@ -20,8 +20,9 @@ def get_stream_records(entity):
 
     for attr, val in entity['dynamodb']['NewImage'].items():
         if 'M' in val:
-            if 'value' not in val['M']:
+            if 'value' not in val['M'] or 'type' not in val['M'] or val['M']['type'] != 'medicaid_detail':
                 continue
+
             value = val['M']['value']['S']
             if is_insert or value != entity['dynamodb']['OldImage'][attr]['M']['value']['S']:
                 detail = {
@@ -34,7 +35,6 @@ def get_stream_records(entity):
                 }
                 
                 details.append(detail)
-
 
     if is_insert:
         # TODO: take care of country, state, status
@@ -67,5 +67,5 @@ def handler(event, context):
     # kinesis = boto3.client('kinesis', region_name='us-east-1')
     # res = kinesis.put_records(Records=records, StreamName='sps_data')
     # print (res, 'kinesis')
-    print (records)
+    print (json.dumps(records))
     return records
