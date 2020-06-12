@@ -38,7 +38,7 @@ def get_stream_records(entity):
                 continue
 
             value_entity = val['M']['value']
-            if is_insert or value_entity != entity['dynamodb']['OldImage'][attr]['M']['value']:
+            if is_insert or attr not in entity['dynamodb']['OldImage'] or value_entity != entity['dynamodb']['OldImage'][attr]['M']['value']:
                 value = parse_value(value_entity)
                 if not value:
                     continue

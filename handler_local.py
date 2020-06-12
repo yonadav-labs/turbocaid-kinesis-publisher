@@ -3,7 +3,7 @@ import json
 from handler import get_stream_records
 
 if __name__ == '__main__':
-    with open('./events/modify-1.json') as f:
+    with open('./events/modify-2.json') as f:
         event = json.load(f)
 
     records = []
