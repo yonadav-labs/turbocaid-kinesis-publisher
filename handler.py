@@ -1,7 +1,7 @@
 import json
 import datetime
 
-# import boto3
+import boto3
 
 from stream import TurbocaidApplication, MedicaidDetail
 
@@ -20,7 +20,7 @@ def get_stream_records(entity):
 
     for attr, val in entity['dynamodb']['NewImage'].items():
         if 'M' in val:
-            if 'value' not in val['M'] or 'type' not in val['M'] or val['M']['type'] != 'medicaid_detail':
+            if 'value' not in val['M'] or 'type' not in val['M'] or val['M']['type']['S'] != 'medicaid_detail':
                 continue
 
             value = val['M']['value']['S']
@@ -59,13 +59,14 @@ def get_stream_records(entity):
 
 
 def handler(event, context):
-    # print(event)
+    print(event)
     records = []
     for record in event['Records']:
         records += get_stream_records(record)
 
-    # kinesis = boto3.client('kinesis', region_name='us-east-1')
-    # res = kinesis.put_records(Records=records, StreamName='sps_data')
-    # print (res, 'kinesis')
     print (json.dumps(records))
+    if records:
+        kinesis = boto3.client('kinesis', region_name='us-east-1')
+        res = kinesis.put_records(Records=records, StreamName='sps_data')
+        print (res, 'kinesis')
     return records
