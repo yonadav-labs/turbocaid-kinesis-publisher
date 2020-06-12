@@ -1,9 +1,13 @@
 import json
 
-from handler import handler
+from handler import get_stream_records
 
 if __name__ == '__main__':
-    with open('./events/modify.json') as f:
+    with open('./events/modify-1.json') as f:
         event = json.load(f)
 
-    items = handler(event=event, context={})
+    records = []
+    for record in event['Records']:
+        records += get_stream_records(record)
+
+    print (records)

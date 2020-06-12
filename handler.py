@@ -6,6 +6,20 @@ import boto3
 from stream import TurbocaidApplication, MedicaidDetail
 
 
+def parse_value(value_entity):
+    """
+    build a valid value from various format value data
+    """
+    if 'S' in value_entity:
+        value = value_entity['S']
+    elif 'M' in value_entity:
+        value = {key: parse_value(val) for key, val in value_entity['M'].items()}
+    elif 'L' in value_entity:
+        value = [parse_value(ii) for ii in value_entity['L']]
+
+    return value
+
+
 def get_stream_records(entity):
     """
     generate stream records for kinesis
@@ -23,8 +37,12 @@ def get_stream_records(entity):
             if 'value' not in val['M'] or 'type' not in val['M'] or val['M']['type']['S'] != 'medicaid_detail':
                 continue
 
-            value = val['M']['value']['S']
-            if is_insert or value != entity['dynamodb']['OldImage'][attr]['M']['value']['S']:
+            value_entity = val['M']['value']
+            if is_insert or value_entity != entity['dynamodb']['OldImage'][attr]['M']['value']:
+                value = parse_value(value_entity)
+                if not value:
+                    continue
+
                 detail = {
                     'event_id': entity['eventID'],
                     'uuid': val['M']['uuid']['S'],
