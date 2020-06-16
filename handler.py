@@ -10,6 +10,7 @@ def parse_value(value_entity):
     """
     build a valid value from various format value data
     """
+    value = None
     if 'S' in value_entity:
         value = value_entity['S']
     elif 'M' in value_entity:
@@ -80,11 +81,14 @@ def handler(event, context):
     print(event)
     records = []
     for record in event['Records']:
-        records += get_stream_records(record)
+        if record['eventName'] in ['INSERT', 'MODIFY']:
+            records += get_stream_records(record)
 
     print (json.dumps(records))
     if records:
         kinesis = boto3.client('kinesis', region_name='us-east-1')
-        res = kinesis.put_records(Records=records, StreamName='sps_data')
+        email = event['Records'][0]['dynamodb']['Keys']['email']['S']
+        stream_name = 'sps-data-integration-test' if 'test' in email else 'sps_data'
+        res = kinesis.put_records(Records=records, StreamName=stream_name)
         print (res, 'kinesis')
     return records
