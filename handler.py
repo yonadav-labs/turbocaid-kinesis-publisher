@@ -31,6 +31,7 @@ def get_stream_records(entity):
     details = []
 
     is_insert = entity['eventName'] == 'INSERT'
+    is_insert = True
     app_id = entity['dynamodb']['Keys']['application_uuid']['S']
 
     for attr, val in entity['dynamodb']['NewImage'].items():
