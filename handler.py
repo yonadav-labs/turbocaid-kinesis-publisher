@@ -1,3 +1,4 @@
+import os
 import json
 import datetime
 
@@ -5,6 +6,8 @@ import boto3
 
 from stream import TurbocaidApplication, MedicaidDetail
 
+
+TEST_USER_EMAIL = os.environ.get('TEST_USER_EMAIL')
 
 def parse_value(value_entity):
     """
@@ -89,7 +92,7 @@ def handler(event, context):
     if records:
         kinesis = boto3.client('kinesis', region_name='us-east-1')
         email = event['Records'][0]['dynamodb']['Keys']['email']['S']
-        stream_name = 'sps-data-integration-test' if 'test' in email else 'sps_data'
+        stream_name = 'sps-data-integration-test' if email == TEST_USER_EMAIL else 'sps_data'
         res = kinesis.put_records(Records=records, StreamName=stream_name)
         print (res, 'kinesis')
     return records
