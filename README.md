@@ -1,1 +1,1 @@
-# turbocaid--kinesis-publisher
+# turbocaid-kinesis-publisher
